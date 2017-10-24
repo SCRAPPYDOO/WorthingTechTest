@@ -35,7 +35,7 @@ public class ShopingCart {
 
 	public double checkout() {
 		double totalPrice = 0.0;
-		
+
 		String output = "";
 		for (Item item : listOfItems) {
 			totalPrice += item.getPrice();
@@ -50,28 +50,29 @@ public class ShopingCart {
 	public double getDiscountValue() {
 		double discount = 0.0;
 		Map<Item, Integer> counting = new HashMap<>();
-		int apples = 0;
-		int oranges = 0;
 		
 		for (Item item : listOfItems) {
-			switch (item) {
-				case APPLE: 
-					++apples;
-					break;
-				case ORANGE: 
-					++oranges; 
-					break;
-				default:
-					break;
+			if(counting.get(item) != null) {
+				counting.put(item, counting.get(item).intValue() + 1);
+			} else {
+				counting.put(item, 1);
+			}
+		}	
+		
+		for (Item item : Item.values()) {
+			if(counting.get(item) != null) {
+				switch(item.getDiscountType()) {
+					case THREE_FOR_TWO: 
+						discount = discount + (counting.get(item) / 3) * item.getPrice(); 
+						break;
+					case TWO_FOR_ONE:
+						discount = discount + (counting.get(item) / 2) * item.getPrice(); 
+						break;
+					default:
+						break;
+				}
 			}
 		}
-		double applesDiscount = ((int)apples / 2) * Item.APPLE.getPrice();
-		discount += applesDiscount;
-		System.out.println("apples count: " + apples + " apples discount: " + applesDiscount);
-		
-		double orangesDiscount = ((int)oranges / 3) * Item.ORANGE.getPrice();
-		discount += orangesDiscount;
-		System.out.println("oranges count: " + oranges + " oranges discount: " + orangesDiscount);
 		
 		return discount;
 	}
